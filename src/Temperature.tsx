@@ -1,11 +1,18 @@
 import React from 'react';
-import { observable, computed, extendObservable } from "mobx";
+import { observable, computed } from "mobx";
 import { observer } from "mobx-react";
 import DevTools from "mobx-react-devtools";
 
 class Temperature {
+  id = Math.random();
   @observable unit = "C";
   @observable temperatureCelsius = 25;
+  @observable location: string;
+  constructor(
+    location = 'Amsterdam'
+  ) {
+    this.location = location;
+  }
   // The following is the same as above
   // constructor() {
   //   extendObservable(this, {
@@ -53,13 +60,18 @@ class Temperature {
 //   }
 // })
 
-const Temp = observer(({ temperature }: { temperature: Temperature }) => (
+// Example of array
+const temps = observable([] as Temperature[])
+temps.push(new Temperature('Amerster'));
+temps.push(new Temperature());
+
+const Temp = observer(({ temperatures }: { temperatures: Temperature[] }) => (
   <div>
-    {temperature.temperature}
+    {temperatures.map(temp => (
+      <div key={temp.id}>{temp.temperature}</div>
+    ))}
     <DevTools/>
   </div>
 ));
 
-const t = new Temperature();
-
-export default () => <Temp temperature={t} />
+export default () => <Temp temperatures={temps} />
